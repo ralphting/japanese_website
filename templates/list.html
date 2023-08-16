@@ -1,0 +1,28 @@
+{% include 'header.html' %}
+<div class="px-4 pt-5 my-5 text-center">
+    <div class="col-lg-6 mx-auto">
+        <table class="table table-bordered table-hover table-sm">
+            <thead>
+            <tr>
+                <th scope="col" class="col-md-1">#</th>
+                <th scope="col" class="col-md-2">Kanji</th>
+                <th scope="col" class="col-md-3">Meaning</th>
+                <th scope="col" class="col-md-3">Kunyomi</th>
+                <th scope="col-" class="col-md-3">Onyomi</th>
+            </tr>
+            </thead>
+            <tbody>
+            {% for word in word_list %}
+            <tr>
+                <th scope="row">{{ word['id'] }}</th>
+                <td>{{ word['kanji'] }}</td>
+                <td>{{ word['meaning'] }}</td>
+                <td>{{ word['kunyomi'] }}</td>
+                <td>{{ word['onyomi'] }}</td>
+            </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% include 'footer.html' %}

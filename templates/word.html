@@ -1,0 +1,10 @@
+{% include 'header.html' %}
+<div class="px-4 pt-5 my-5 text-center">
+    <h1 class="display-4 fw-bold text-body-emphasis">The Random Word Is</h1>
+    <h1 class="display-4 fw-bold text-body-emphasis">{{ word['kanji'] }}</h1>
+    <h3>Kunyomi: {{ word['kunyomi'] }}</h3>
+    <h3>Onyomi: {{ word['onyomi'] }}</h3>
+    <h4>Meaning: {{ word['meaning'] }}</h4>
+
+</div>
+{% include 'footer.html' %}
