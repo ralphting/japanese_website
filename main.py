@@ -47,7 +47,7 @@ def save_record():
     if file.filename == '':
         flash('No selected file')
         return redirect(request.url)
-    file_name = str(uuid.uuid4()) + ".wav"
+    file_name = "current_sound.wav"
     full_file_name = os.path.join(app.config['UPLOAD_FOLDER'], file_name)
     file.save(full_file_name)
     return '<h1>Success</h1>'
