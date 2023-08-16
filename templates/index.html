@@ -9,6 +9,7 @@
                     onclick="window.location.href='{{ url_for('word') }}';">Get Started
             </button>
         </div>
+            <!--These are buttons for recording sound-->
             <button type="button" class="btn btn-primary btn-lg px-4 me-sm-3" id=recordButton>Record</button>
             <button type="button" class="btn btn-primary btn-lg px-4 me-sm-3" id=stopButton>Stop</button>
     </div>
@@ -20,6 +21,7 @@
     </div>
 </div>
 
+<!--This doesn't work-->
 <script src="{{ url_for('static', filename='js/WebAudioRecorder.min.js') }}" ></script>
 <script src="{{ url_for('static', filename='js/app.js') }}"></script>
 {% include 'footer.html' %}
