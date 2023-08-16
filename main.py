@@ -11,7 +11,7 @@ app.config['SECRET_KEY'] = "SecretKey"
 app.config['SQLALCHEMY_DATABASE_URI'] ='sqlite:///kanji.db'
 db = SQLAlchemy(app)
 
-@app.route('/')
+@app.route('/', methods=["GET", "POST"])
 def home():
     return render_template('index.html')
 

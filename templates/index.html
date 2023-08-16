@@ -2,15 +2,24 @@
 <div class="px-4 pt-5 my-5 text-center">
     <h1 class="display-4 fw-bold text-body-emphasis">Learn a New Word Everyday</h1>
     <div class="col-lg-6 mx-auto">
-      <p class="lead mb-4">We should all  make time to learn something new. Kanji Of The Day aims to  help  us learn Japanese one day at a time!</p>
-      <div class="d-grid gap-2 d-sm-flex justify-content-sm-center mb-5">
-        <button type="button" class="btn btn-primary btn-lg px-4 me-sm-3" onclick="window.location.href='{{ url_for('word') }}';">Get Started</button>
-      </div>
+        <p class="lead mb-4">We should all make time to learn something new. Kanji Of The Day aims to help us learn
+            Japanese one day at a time!</p>
+        <div class="d-grid gap-2 d-sm-flex justify-content-sm-center mb-5">
+            <button type="button" class="btn btn-primary btn-lg px-4 me-sm-3"
+                    onclick="window.location.href='{{ url_for('word') }}';">Get Started
+            </button>
+        </div>
+            <button type="button" class="btn btn-primary btn-lg px-4 me-sm-3" id=recordButton>Record</button>
+            <button type="button" class="btn btn-primary btn-lg px-4 me-sm-3" id=stopButton>Stop</button>
     </div>
     <div class="overflow-hidden" style="max-height: 30vh;">
-      <div class="container px-5">
-        <img src="static/images/frontpage_banner.png" class="img-fluid border rounded-3 shadow-lg mb-4" alt="Example image" width="500"  loading="lazy">
-      </div>
+        <div class="container px-5">
+            <img src="static/images/frontpage_banner.png" class="img-fluid border rounded-3 shadow-lg mb-4"
+                 alt="Example image" width="500" loading="lazy">
+        </div>
     </div>
-  </div>
+</div>
+
+<script src="{{ url_for('static', filename='js/WebAudioRecorder.min.js') }}" ></script>
+<script src="{{ url_for('static', filename='js/app.js') }}"></script>
 {% include 'footer.html' %}
