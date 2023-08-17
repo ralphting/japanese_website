@@ -28,7 +28,7 @@ function recordData() {
         //Chrome inspector shows that the post data includes a file and a title.
         $.ajax({
             type: 'POST',
-            url: '/save-record',
+            url: '/save_record',
             data: form,
             cache: false,
             processData: false,

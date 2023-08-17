@@ -1,7 +1,7 @@
 import os
 import uuid
 
-from flask import Flask, render_template, request, redirect, flash
+from flask import Flask, render_template, request, redirect, flash, url_for
 from flask_sqlalchemy import SQLAlchemy
 import requests
 import speech_recognition as sr
@@ -10,7 +10,6 @@ JAPANESE_API_URL = "https://chibachoose.pythonanywhere.com/"
 
 app = Flask(__name__)
 app.config['SECRET_KEY'] = "SecretKey"
-app.config['UPLOAD_FOLDER'] = 'D://pythonProject/japanese_website/data'
 
 app.config['SQLALCHEMY_DATABASE_URI'] ='sqlite:///kanji.db'
 db = SQLAlchemy(app)
@@ -35,7 +34,13 @@ def list():
 def about():
     return render_template('about.html')
 
-@app.route('/save-record', methods=['POST'])
+@app.route('/transcribe', methods=['GET'])
+def transcribe():
+    text = ""
+    AUDIO_FILE = path.join(path.dirname(path.realpath(__file__)))
+    return render_template('transcribe.html')
+
+@app.route('/save_record', methods=['POST'])
 def save_record():
     # check if the post request has the file part
     if 'file' not in request.files:
@@ -48,9 +53,11 @@ def save_record():
         flash('No selected file')
         return redirect(request.url)
     file_name = "current_sound.wav"
-    full_file_name = os.path.join(app.config['UPLOAD_FOLDER'], file_name)
+    print(app.instance_path)
+    full_file_name = os.path.join(app.instance_path, file_name)
     file.save(full_file_name)
-    return '<h1>Success</h1>'
+    return redirect(request.url)
+
 
 if __name__ == "__main__":
     app.run(debug=True)
