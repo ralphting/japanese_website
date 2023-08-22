@@ -6,10 +6,11 @@ function recordData() {
 
         function handlerFunction(stream) {
             rec = new MediaRecorder(stream);
+            rec.mimeType = "audio/wav"
             rec.ondataavailable = e => {
                 audioChunks.push(e.data);
                 if (rec.state == "inactive") {
-                    let blob = new Blob(audioChunks, {type: 'audio/mpeg-3'});
+                    let blob = new Blob(audioChunks, {type: 'audio/wav'});
                     stream.getAudioTracks()[0].stop()
                     sendData(blob);
                 }

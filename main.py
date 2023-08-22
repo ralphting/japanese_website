@@ -1,10 +1,9 @@
 import os
-import uuid
 
 from flask import Flask, render_template, request, redirect, flash, url_for
 from flask_sqlalchemy import SQLAlchemy
 import requests
-import speech_recognition as sr
+import whisper
 
 JAPANESE_API_URL = "https://chibachoose.pythonanywhere.com/"
 
@@ -13,6 +12,8 @@ app.config['SECRET_KEY'] = "SecretKey"
 
 app.config['SQLALCHEMY_DATABASE_URI'] ='sqlite:///kanji.db'
 db = SQLAlchemy(app)
+
+model = whisper.load_model("base")
 
 @app.route('/', methods=["GET", "POST"])
 def home():
@@ -36,9 +37,26 @@ def about():
 
 @app.route('/transcribe', methods=['GET'])
 def transcribe():
-    text = ""
-    AUDIO_FILE = path.join(path.dirname(path.realpath(__file__)))
-    return render_template('transcribe.html')
+    transcribe = ""
+    path = os.path.join(app.instance_path, "current_sound.wav")
+    if os.path.exists(path):
+        result = model.transcribe(path)
+        transcribe = result["text"]
+        # AUDIO_FILE = os.path.join(os.path.dirname(os.path.realpath(__file__)), "instance\current_sound.wav")
+        # r = sr.Recognizer()
+        # try:
+        #     with sr.AudioFile(AUDIO_FILE) as source:
+        #         audio = r.record(source)
+        #     try:
+        #         transcribe = r.recognize_sphinx(audio)
+        #         print(f"Sphinx thinks you said: {transcribe}")
+        #     except sr.UnknownValueError:
+        #         print("Sphinx could not understand audio")
+        #     except sr.RequestError as err:
+        #         print("Sphinx error; {0}".format(err))
+        # except Exception as err:
+        #     print(str(err))
+    return render_template('transcribe.html', transcribe=transcribe)
 
 @app.route('/save_record', methods=['POST'])
 def save_record():
@@ -53,7 +71,6 @@ def save_record():
         flash('No selected file')
         return redirect(request.url)
     file_name = "current_sound.wav"
-    print(app.instance_path)
     full_file_name = os.path.join(app.instance_path, file_name)
     file.save(full_file_name)
     return redirect(request.url)
