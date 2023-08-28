@@ -29,11 +29,13 @@ function recordData() {
         //Chrome inspector shows that the post data includes a file and a title.
         $.ajax({
             type: 'POST',
-            url: '/save_record',
+            url: '/transcribe',
             data: form,
             cache: false,
             processData: false,
-            contentType: false
+            contentType: false,
+            success: function(response){
+                window.location.href = "/transcribe";}
         }).done(function(data) {
             console.log(data);
         });

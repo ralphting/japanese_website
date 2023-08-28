@@ -1,6 +1,6 @@
 import os
 
-from flask import Flask, render_template, request, redirect, flash, url_for
+from flask import Flask, render_template, request, redirect, flash, url_for, json
 from flask_sqlalchemy import SQLAlchemy
 import requests
 import whisper
@@ -9,11 +9,13 @@ JAPANESE_API_URL = "https://chibachoose.pythonanywhere.com/"
 
 app = Flask(__name__)
 app.config['SECRET_KEY'] = "SecretKey"
+app.config['UPLOAD_FOLDER'] = app.root_path + "\\tmp"
 
 app.config['SQLALCHEMY_DATABASE_URI'] ='sqlite:///kanji.db'
 db = SQLAlchemy(app)
 
 model = whisper.load_model("base")
+
 
 @app.route('/', methods=["GET", "POST"])
 def home():
@@ -35,32 +37,36 @@ def list():
 def about():
     return render_template('about.html')
 
-@app.route('/transcribe', methods=['GET'])
+@app.route('/transcribe', methods=['GET', 'POST'])
 def transcribe():
-    transcribe = ""
-    path = os.path.join(app.instance_path, "current_sound.wav")
-    if os.path.exists(path):
-        result = model.transcribe(path)
-        transcribe = result["text"]
-        # AUDIO_FILE = os.path.join(os.path.dirname(os.path.realpath(__file__)), "instance\current_sound.wav")
-        # r = sr.Recognizer()
-        # try:
-        #     with sr.AudioFile(AUDIO_FILE) as source:
-        #         audio = r.record(source)
-        #     try:
-        #         transcribe = r.recognize_sphinx(audio)
-        #         print(f"Sphinx thinks you said: {transcribe}")
-        #     except sr.UnknownValueError:
-        #         print("Sphinx could not understand audio")
-        #     except sr.RequestError as err:
-        #         print("Sphinx error; {0}".format(err))
-        # except Exception as err:
-        #     print(str(err))
-    return render_template('transcribe.html', transcribe=transcribe)
+    if request.method == "POST":
+        if 'file' not in request.files:
+            flash('No file part')
+            return redirect(request.url)
+        file = request.files['file']
+        # if user does not select file, browser also
+        # submit an empty part without filename
+        if file.filename == '':
+            flash('No selected file')
+            return redirect(request.url)
+        file_name = "data.wav"
+        # full_file_name = os.path.join(app.instance_path, file_name)
+        full_file_name = os.path.join(app.config['UPLOAD_FOLDER'], file_name)
+        file.save(full_file_name)
+        result = model.transcribe(full_file_name)
+        transcript = result["text"]
+        print(transcript)
+        # return redirect(url_for('transcribe', transcript=transcript))
+        # return redirect(url_for('display_text', transcript=transcript))
+        return json.dumps({'success': True}), 200, {'ContentType': 'application/json'}
+    else:
+        transcript = ""
+    return render_template('transcribe.html', transcript=transcript)
 
 @app.route('/save_record', methods=['POST'])
 def save_record():
     # check if the post request has the file part
+    transcript = ""
     if 'file' not in request.files:
         flash('No file part')
         return redirect(request.url)
@@ -70,10 +76,14 @@ def save_record():
     if file.filename == '':
         flash('No selected file')
         return redirect(request.url)
-    file_name = "current_sound.wav"
-    full_file_name = os.path.join(app.instance_path, file_name)
+    file_name = "data.wav"
+    # full_file_name = os.path.join(app.instance_path, file_name)
+    full_file_name = os.path.join(app.config['UPLOAD_FOLDER'], file_name)
     file.save(full_file_name)
-    return redirect(request.url)
+    result = model.transcribe(full_file_name)
+    transcript = result["text"]
+    print(transcript)
+    return redirect(url_for('transcribe', transcript=transcript))
 
 
 if __name__ == "__main__":
