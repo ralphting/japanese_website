@@ -35,7 +35,7 @@ function recordData() {
             processData: false,
             contentType: false,
             success: function(response){
-                transcript.text("show some text").show();}
+                document.getElementById("transcript").innerHTML = data.transcript;}
         }).done(function(data) {
             console.log(data);
         });
