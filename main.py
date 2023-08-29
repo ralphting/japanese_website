@@ -1,6 +1,6 @@
 import os
 
-from flask import Flask, render_template, request, redirect, flash, url_for, json
+from flask import Flask, render_template, request, redirect, flash, url_for, json, jsonify
 from flask_sqlalchemy import SQLAlchemy
 import requests
 import whisper
@@ -56,17 +56,13 @@ def transcribe():
         result = model.transcribe(full_file_name)
         transcript = result["text"]
         print(transcript)
-        # return redirect(url_for('transcribe', transcript=transcript))
-        # return redirect(url_for('display_text', transcript=transcript))
-        return json.dumps({'success': True}), 200, {'ContentType': 'application/json'}
+        return jsonify({'transcript': transcript})
     else:
-        transcript = ""
-    return render_template('transcribe.html', transcript=transcript)
+        return render_template('transcribe.html')
 
 @app.route('/save_record', methods=['POST'])
 def save_record():
     # check if the post request has the file part
-    transcript = ""
     if 'file' not in request.files:
         flash('No file part')
         return redirect(request.url)
@@ -83,7 +79,7 @@ def save_record():
     result = model.transcribe(full_file_name)
     transcript = result["text"]
     print(transcript)
-    return redirect(url_for('transcribe', transcript=transcript))
+    return redirect(url_for('transcribe'))
 
 
 if __name__ == "__main__":

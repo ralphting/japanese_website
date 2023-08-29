@@ -35,7 +35,7 @@ function recordData() {
             processData: false,
             contentType: false,
             success: function(response){
-                window.location.href = "/transcribe";}
+                transcript.text("show some text").show();}
         }).done(function(data) {
             console.log(data);
         });
