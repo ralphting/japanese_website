@@ -26,6 +26,7 @@ function recordData() {
         var form = new FormData();
         form.append('file', data, 'data.wav');
         form.append('title', 'data.wav');
+        document.getElementById("transcript").innerHTML = "Transcribing..."
         //Chrome inspector shows that the post data includes a file and a title.
         $.ajax({
             type: 'POST',
@@ -35,7 +36,7 @@ function recordData() {
             processData: false,
             contentType: false,
             success: function(response){
-                document.getElementById("transcript").innerHTML = JSON.stringify(response).transcript;}
+                document.getElementById("transcript").innerHTML = JSON.stringify(response.transcript);}
         }).done(function(response) {
             console.log(data);
         });

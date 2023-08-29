@@ -55,6 +55,7 @@ def transcribe():
         file.save(full_file_name)
         result = model.transcribe(full_file_name)
         transcript = result["text"]
+        os.remove(full_file_name)
         print(transcript)
         return jsonify({'transcript': transcript})
     else:
