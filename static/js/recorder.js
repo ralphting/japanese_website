@@ -35,8 +35,8 @@ function recordData() {
             processData: false,
             contentType: false,
             success: function(response){
-                document.getElementById("transcript").innerHTML = data.transcript;}
-        }).done(function(data) {
+                document.getElementById("transcript").innerHTML = JSON.stringify(response).transcript;}
+        }).done(function(response) {
             console.log(data);
         });
     }
