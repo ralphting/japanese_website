@@ -36,7 +36,7 @@ function recordData() {
             processData: false,
             contentType: false,
             success: function(response){
-                document.getElementById("transcript").innerHTML = JSON.stringify(response.transcript);}
+                document.getElementById("transcript").innerHTML = JSON.stringify(response.transcript).replaceAll('"', '');}
         }).done(function(response) {
             console.log(data);
         });
