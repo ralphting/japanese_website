@@ -9,17 +9,18 @@ import whisper
 JAPANESE_API_URL = "https://chibachoose.pythonanywhere.com/api/"
 
 app = Flask(__name__)
-#Part of the website
+# Part of the website
 app.config['SECRET_KEY'] = "SecretKey"
 app.config['UPLOAD_FOLDER'] = app.root_path + "\\tmp"
 
-#Part of the API
+# Part of the API
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///kanji.db'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 db = SQLAlchemy(app)
 
-#part of the website
+# part of the website
 model = whisper.load_model("base")
+
 
 class Kanji(db.Model):
     id = db.Column(db.Integer, primary_key=True)
@@ -31,10 +32,12 @@ class Kanji(db.Model):
     def to_dict(self):
         return {column.name: getattr(self, column.name) for column in self.__table__.columns}
 
-#This is part of the website.
+
+# This is part of the website.
 @app.route('/', methods=["GET", "POST"])
 def home():
     return render_template('index.html')
+
 
 @app.route('/word')
 def word():
@@ -44,6 +47,7 @@ def word():
     word_data = response.json()
     return render_template('word.html', word=word_data)
 
+
 @app.route('/list')
 def list():
     # response = requests.get(f"{JAPANESE_API_URL}all")
@@ -52,9 +56,11 @@ def list():
     word_list = response.json()
     return render_template('list.html', word_list=word_list)
 
+
 @app.route('/about')
 def about():
     return render_template('about.html')
+
 
 @app.route('/transcribe', methods=['GET', 'POST'])
 def transcribe():
@@ -77,10 +83,12 @@ def transcribe():
     else:
         return render_template('transcribe.html')
 
-#Added API into the same Flask server
+
+# Added API into the same Flask server
 @app.route('/api')
 def api_home():
     return "Japanese Kanji API Version 1.0.0 by Ralph Ting"
+
 
 @app.route('/api/random', methods=["GET"])
 def random_kanji():
@@ -89,6 +97,7 @@ def random_kanji():
         random_id = random.randint(1, rows)
         random_word = Kanji.query.get(random_id)
         return jsonify(random_word.to_dict())
+
 
 @app.route('/api/all', methods=["GET"])
 def get_all():
@@ -100,6 +109,7 @@ def get_all():
         else:
             return jsonify({"error": "No entries in database. Please try again."})
 
+
 @app.route('/api/search', methods=["GET"])
 def search_kanji():
     if request.method == "GET":
@@ -109,6 +119,7 @@ def search_kanji():
             return jsonify(kanji.to_dict())
         except Exception as err:
             return jsonify({"error": str(err)})
+
 
 @app.route('/api/add', methods=["POST"])
 def add_kanji():
@@ -130,12 +141,13 @@ def add_kanji():
         else:
             return jsonify(error={"failed": "Invalid API_KEY."})
 
+
 @app.route('/api/edit', methods=["PATCH"])
 def edit_kanji():
     if request.method == "PATCH":
         api_key = request.headers.get('apikey')
         if api_key == os.getenv('API_KEY'):
-            kanji_id  = request.args.get('id')
+            kanji_id = request.args.get('id')
             try:
                 kanji_to_edit = db.session.query(Kanji).get(kanji_id)
                 if request.args.get('kunyomi'):
@@ -148,6 +160,7 @@ def edit_kanji():
                 return jsonify({"success": "The kanji has beeen successfully updated"})
             except Exception as err:
                 return jsonify({"error": str(err)})
+
 
 @app.route('/api/delete', methods=["DELETE"])
 def delete_kanji():
@@ -164,6 +177,7 @@ def delete_kanji():
                 return jsonify({"error": str(err)})
         else:
             return jsonify({"error": "Invalid API_KEY."})
+
 
 if __name__ == "__main__":
     app.run(debug=True)
